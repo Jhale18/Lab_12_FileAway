@@ -1,15 +1,39 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import javax.swing.*;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Files;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+public class FileInspector {
+    public static void main(String[] args) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File(System.getProperty("user.dir") + "/src"));
+        int result = chooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            Path filePath = file.toPath();
+            int lines = 0;
+            int words = 0;
+            int characters = 0;
+            try (BufferedReader reader = Files.newBufferedReader(filePath)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                    lines++;
+                    words += line.split("\\s+").length;
+                    characters += line.length();
+                }
+            } catch (IOException e) {
+                System.out.println("Error reading the file!");
+                e.printStackTrace();
+            }
+
+            System.out.println("\nSummary:");
+            System.out.println("File: " + file.getName());
+            System.out.println("Lines: " + lines);
+            System.out.println("Words: " + words);
+            System.out.println("Characters: " + characters);
+        } else {
+            System.out.println("No file selected!");
         }
     }
 }
